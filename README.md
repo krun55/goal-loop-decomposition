@@ -2,7 +2,7 @@
 
 ## English
 
-`goal-loop-decomposition` is a Codex skill for turning a broad goal into a dependency-aware loop of smaller sub-goals. It keeps a controller ledger, selects the next ready sub-goal, generates execution prompts, and requires acceptance evidence before continuing.
+`goal-loop-decomposition` is an agent skill for Codex and Claude Code. It turns a broad goal into a dependency-aware loop of smaller sub-goals, keeps a controller ledger, selects the next ready sub-goal, generates execution prompts, and requires acceptance evidence before continuing.
 
 ### When to use it
 
@@ -17,16 +17,30 @@ Use this skill when a task is too broad to execute safely in one pass and needs:
 
 ### Install
 
-Clone this repository into your Codex skills directory:
+Clone this repository into your agent's skills directory.
+
+For Codex:
 
 ```bash
 git clone https://github.com/krun55/goal-loop-decomposition.git ~/.codex/skills/goal-loop-decomposition
 ```
 
-Then invoke it in Codex:
+For Claude Code:
+
+```bash
+git clone https://github.com/krun55/goal-loop-decomposition.git ~/.claude/skills/goal-loop-decomposition
+```
+
+Then invoke it in your agent session:
 
 ```text
 Use $goal-loop-decomposition to split this goal into dependent sub-goals and run the gated loop.
+```
+
+Claude Code users can also ask naturally, for example:
+
+```text
+Use the goal-loop-decomposition skill to decompose this broad goal into gated sub-goals.
 ```
 
 ### What it enforces
@@ -36,6 +50,12 @@ Use $goal-loop-decomposition to split this goal into dependent sub-goals and run
 - System goal tools are treated as single-active-goal unless the environment says otherwise.
 - Subagents or separate threads are used only when explicitly allowed.
 - Blocked sub-goals must record exact failed commands, errors, and attempted fixes.
+
+### Claude Code notes
+
+- `SKILL.md` is the portable skill entrypoint.
+- `agents/openai.yaml` is Codex UI metadata and can be ignored by Claude Code.
+- If your Claude Code environment does not expose goal-management tools, run the loop directly from the ledger and only mark status in the ledger.
 
 ### Repository layout
 
@@ -51,7 +71,7 @@ Use $goal-loop-decomposition to split this goal into dependent sub-goals and run
 
 ## 中文
 
-`goal-loop-decomposition` 是一个 Codex skill，用来把宽泛目标拆成带依赖关系的子目标循环。它要求维护 controller ledger，自动选择下一个 ready 子目标，生成可执行提示词，并且只有通过验收门后才能继续推进。
+`goal-loop-decomposition` 是一个兼容 Codex 和 Claude Code 的 agent skill，用来把宽泛目标拆成带依赖关系的子目标循环。它要求维护 controller ledger，自动选择下一个 ready 子目标，生成可执行提示词，并且只有通过验收门后才能继续推进。
 
 ### 适用场景
 
@@ -66,16 +86,30 @@ Use $goal-loop-decomposition to split this goal into dependent sub-goals and run
 
 ### 安装
 
-把仓库克隆到 Codex skills 目录：
+把仓库克隆到对应 agent 的 skills 目录。
+
+Codex：
 
 ```bash
 git clone https://github.com/krun55/goal-loop-decomposition.git ~/.codex/skills/goal-loop-decomposition
 ```
 
-然后在 Codex 中调用：
+Claude Code：
+
+```bash
+git clone https://github.com/krun55/goal-loop-decomposition.git ~/.claude/skills/goal-loop-decomposition
+```
+
+然后在 agent 会话里调用：
 
 ```text
 Use $goal-loop-decomposition to split this goal into dependent sub-goals and run the gated loop.
+```
+
+Claude Code 用户也可以自然语言调用：
+
+```text
+Use the goal-loop-decomposition skill to decompose this broad goal into gated sub-goals.
 ```
 
 ### 核心约束
@@ -85,6 +119,12 @@ Use $goal-loop-decomposition to split this goal into dependent sub-goals and run
 - 除非环境明确支持，否则系统 goal 工具按单 active goal 处理。
 - 只有在用户或工具策略明确允许时，才使用 subagent 或单独线程。
 - blocked 子目标必须记录失败命令、错误、已尝试修复和阻塞原因。
+
+### Claude Code 说明
+
+- `SKILL.md` 是可移植的 skill 入口。
+- `agents/openai.yaml` 是 Codex UI 元数据，Claude Code 可以忽略。
+- 如果 Claude Code 环境没有 goal-management 工具，就直接用 ledger loop 执行，并只在 ledger 中更新状态。
 
 ### 仓库结构
 

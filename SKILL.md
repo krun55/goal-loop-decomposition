@@ -13,6 +13,7 @@ Turn a broad goal into a dependency-ordered loop of small sub-goals. Run one rea
 
 - Keep one controller ledger for the parent goal. Do not rely on memory alone.
 - Treat system goal tools as single-active-goal tools unless the current environment explicitly says otherwise. Create or update only the outer goal when tool policy permits it; manage sub-goals in the ledger.
+- In environments without goal-management tools, such as some Claude Code setups, run the loop directly from the ledger and record status there.
 - Never accept a sub-goal without fresh verification evidence. Use `verification-before-completion` before marking any sub-goal accepted.
 - Do not spawn subagents or separate threads unless the user or current tool policy explicitly allows delegation. If delegation is allowed, give each worker a disjoint write scope and still verify before acceptance.
 - If a sub-goal fails its gate, fix and rerun the gate. If the same blocker repeats three times, mark that sub-goal `blocked` with evidence and choose another ready sub-goal if one exists.
