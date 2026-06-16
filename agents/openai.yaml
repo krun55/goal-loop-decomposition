@@ -1,4 +1,4 @@
 interface:
   display_name: "Goal Loop Decomposition"
   short_description: "Decompose goals into gated execution loops"
-  default_prompt: "Use $goal-loop-decomposition to break this goal into dependent sub-goals, generate the next sub-goal prompt, and loop through gated execution until complete."
+  default_prompt: "Use $goal-loop-decomposition to create or adopt a parent goal, break it into dependent sub-goals, and loop through gated execution until complete."

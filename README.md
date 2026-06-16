@@ -10,7 +10,8 @@ Use this skill when a task is too broad to execute safely in one pass and needs:
 
 - sub-goal decomposition
 - dependency tracking
-- goal-mode execution prompts
+- explicit parent-goal tracking when goal-management tools are available and no incompatible active goal exists
+- execution prompts for each sub-goal
 - forced acceptance gates
 - automatic next-sub-goal selection
 - a final parent-goal verification pass
@@ -46,8 +47,9 @@ Use the goal-loop-decomposition skill to decompose this broad goal into gated su
 ### What it enforces
 
 - One controller ledger for the parent goal.
+- Explicit parent-goal creation or adoption when goal-management tools are available.
 - Sub-goals are accepted only with fresh verification evidence.
-- System goal tools are treated as single-active-goal unless the environment says otherwise.
+- Sub-goals stay in the ledger unless nested goals are explicitly supported.
 - Subagents or separate threads are used only when explicitly allowed.
 - Blocked sub-goals must record exact failed commands, errors, and attempted fixes.
 
@@ -55,7 +57,8 @@ Use the goal-loop-decomposition skill to decompose this broad goal into gated su
 
 - `SKILL.md` is the portable skill entrypoint.
 - `agents/openai.yaml` is Codex UI metadata and can be ignored by Claude Code.
-- If your Claude Code environment does not expose goal-management tools, run the loop directly from the ledger and only mark status in the ledger.
+- If goal-management tools are unavailable, run the loop directly from the ledger and only mark status in the ledger.
+- If a non-nestable active goal already exists, adopt that active goal as the parent and keep sub-goals in the ledger.
 
 ### Repository layout
 
@@ -79,7 +82,8 @@ Use the goal-loop-decomposition skill to decompose this broad goal into gated su
 
 - 拆分子目标
 - 跟踪依赖关系
-- 生成 goal mode 执行提示词
+- 在环境支持时显式创建或接管 parent goal
+- 为每个子目标生成执行提示词
 - 强制验收门
 - 自动选择下一个子目标
 - 最后做 parent goal 总体验收
@@ -115,8 +119,9 @@ Use the goal-loop-decomposition skill to decompose this broad goal into gated su
 ### 核心约束
 
 - parent goal 必须有一个 controller ledger，不能只靠上下文记忆。
+- 当 goal-management 工具可用时，必须显式创建或接管 parent goal。
 - 子目标必须有新鲜的验证证据，才能标记为 accepted。
-- 除非环境明确支持，否则系统 goal 工具按单 active goal 处理。
+- 除非环境明确支持 nested goals，否则子目标只进 ledger，不单独创建系统 goal。
 - 只有在用户或工具策略明确允许时，才使用 subagent 或单独线程。
 - blocked 子目标必须记录失败命令、错误、已尝试修复和阻塞原因。
 
@@ -124,7 +129,8 @@ Use the goal-loop-decomposition skill to decompose this broad goal into gated su
 
 - `SKILL.md` 是可移植的 skill 入口。
 - `agents/openai.yaml` 是 Codex UI 元数据，Claude Code 可以忽略。
-- 如果 Claude Code 环境没有 goal-management 工具，就直接用 ledger loop 执行，并只在 ledger 中更新状态。
+- 如果环境没有 goal-management 工具，就直接用 ledger loop 执行，并只在 ledger 中更新状态。
+- 如果已经存在不能嵌套的 active goal，就接管这个 active goal 作为 parent，子目标仍然只写入 ledger。
 
 ### 仓库结构
 

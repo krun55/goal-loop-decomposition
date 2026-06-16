@@ -1,6 +1,6 @@
 # Sub-goal Prompt Template
 
-Use this template to create the executable prompt for one sub-goal. Fill every bracket before handing it to goal mode or running it as the controller instruction.
+Use this template to create the executable prompt for one sub-goal. Fill every bracket before running it as the controller instruction or handing it to a nested-goal mechanism that the current environment explicitly supports.
 
 ```markdown
 You are executing one sub-goal inside a larger goal loop.

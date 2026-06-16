@@ -1,6 +1,6 @@
 ---
 name: goal-loop-decomposition
-description: Use when a user gives a broad goal and wants it split into dependent sub-goals, goal-mode execution prompts, autonomous next-goal selection, or forced acceptance gates before continuing.
+description: Use when a user gives a broad goal and wants explicit parent-goal tracking, dependent sub-goals, execution prompts, autonomous next-goal selection, or forced acceptance gates before continuing.
 ---
 
 # Goal Loop Decomposition
@@ -12,7 +12,8 @@ Turn a broad goal into a dependency-ordered loop of small sub-goals. Run one rea
 ## Core Rules
 
 - Keep one controller ledger for the parent goal. Do not rely on memory alone.
-- Treat system goal tools as single-active-goal tools unless the current environment explicitly says otherwise. Create or update only the outer goal when tool policy permits it; manage sub-goals in the ledger.
+- Explicitly create or adopt a parent goal when goal-management tools are available and policy permits it. The parent goal is the system-tracked objective; the ledger is for sub-goals and dependency state.
+- Do not create nested goals when the environment only allows one active goal. If a parent goal already exists and cannot be nested under, adopt it as the outer goal and manage all sub-goals in the ledger.
 - In environments without goal-management tools, such as some Claude Code setups, run the loop directly from the ledger and record status there.
 - Never accept a sub-goal without fresh verification evidence. Use `verification-before-completion` before marking any sub-goal accepted.
 - Do not spawn subagents or separate threads unless the user or current tool policy explicitly allows delegation. If delegation is allowed, give each worker a disjoint write scope and still verify before acceptance.
@@ -22,6 +23,8 @@ Turn a broad goal into a dependency-ordered loop of small sub-goals. Run one rea
 
 1. **Capture the parent goal**
    - Restate the desired outcome, success criteria, non-goals, workspace boundaries, and known constraints.
+   - If goal-management tools are available and there is no incompatible active goal, create the parent goal explicitly before executing sub-goals.
+   - If explicit creation is skipped because nesting is impossible or tools are unavailable, record that fallback in the ledger.
    - Ask one blocking question only when decomposition would be risky without the answer. Otherwise make explicit assumptions and continue.
 
 2. **Build the dependency graph**
@@ -39,7 +42,7 @@ Turn a broad goal into a dependency-ordered loop of small sub-goals. Run one rea
 4. **Generate the sub-goal prompt**
    - Use `references/subgoal-prompt-template.md`.
    - Include the parent goal, exact sub-goal outcome, dependencies already accepted, allowed write/read scope, acceptance gate, verification command, and reporting format.
-   - If goal mode is available and permitted, hand off this prompt as the current goal-mode work item. Otherwise run it as the current controller instruction.
+   - Keep sub-goals inside the controller ledger unless the current environment explicitly supports nested goals. If nested goals are unsupported, run the sub-goal prompt as the current controller instruction.
 
 5. **Run the internal development loop**
    - Load any applicable workflow skills for the sub-goal before work begins.
@@ -55,7 +58,7 @@ Turn a broad goal into a dependency-ordered loop of small sub-goals. Run one rea
 
 7. **Finish the parent goal**
    - Run any parent-level final verification after all sub-goals are accepted.
-   - Only then call `update_goal(status="complete")` when an outer goal exists and tool policy allows it.
+   - Only then mark the created or adopted parent goal complete when a system-tracked parent goal exists and tool policy allows it.
    - Report the final ledger, evidence summary, and remaining risks. If any sub-goal is blocked, do not claim the parent goal is complete.
 
 ## Acceptance Gate
